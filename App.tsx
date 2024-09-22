@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, startTransition, useState } from "react";
 import {
     SafeAreaView,
-    ScrollView,
     StatusBar,
     StyleSheet,
     Text,
@@ -9,62 +8,92 @@ import {
     View,
 } from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
-import { openDb, createTable, fillData } from "./src/Database";
+import {
+    openDb,
+    createTable,
+    fillData,
+    getData,
+    closeDb,
+    initDb,
+} from "./src/Database";
 import { generateData } from "./src/YenData";
-import { Menu } from "./src/Menu";
-import SQLite from "react-native-sqlite-storage";
+import { Button } from "./src/components/Button";
+import { YenForm } from "./src/YenForm";
+import { YenOverview } from "./src/YenOverview";
 
 const App = (): React.JSX.Element => {
     const coins = [1, 5, 10, 50, 100, 500];
-    const [db, setDb] = useState<SQLite.SQLiteDatabase | null>(null);
+    const [records, setRecords] = useState<YenRecord[]>([]);
+    const [db, setDb] = useState<any>(null);
     const isDarkMode = useColorScheme() === "dark";
+    const [view, setView] = useState<"form" | "overview">("form");
 
-    useEffect(() => {
-        async function initializeDb() {
-            try {
-                // const database = await openDb();
-                // await createTable(database);
-                // for (const coin of coins) {
-                //     await fillData(database, generateData(coin));
-                // }
-                // setDb(database);
-            } catch (error) {
-                console.error("Failed to open database:", error);
-            }
+    const fetchRecords = async () => {
+        try {
+            await openDb();
+            setRecords(await getData());
+        } catch (error) {
+            console.error("Failed to fetch records:", error);
         }
-
-        initializeDb();
-    }, []);
-
-    const backgroundStyle = {
-        flex: 1, // Ensure the background covers the full area
-        backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     };
 
+    useEffect(() => {
+        fetchRecords();
+    }, []);
+
+    const styles = StyleSheet.create({
+        bg: {
+            flex: 1, // Ensure the background covers the full area
+            backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+        },
+    });
+
     return (
-        <SafeAreaView style={backgroundStyle}>
+        <SafeAreaView style={styles.bg}>
             <StatusBar
                 barStyle={isDarkMode ? "light-content" : "dark-content"}
-                backgroundColor={backgroundStyle.backgroundColor}
+                backgroundColor={styles.bg.backgroundColor}
             />
-            <ScrollView
-                contentInsetAdjustmentBehavior="automatic"
-                style={backgroundStyle}
-            >
-                <View style={backgroundStyle}>
-                    <Text
-                        style={{
-                            fontSize: 24,
-                            fontWeight: "bold",
-                            textAlign: "center",
-                            marginTop: 20,
-                        }}
-                    >
-                        Yen Collection
-                    </Text>
+            <View style={styles.bg}>
+                <Text
+                    style={{
+                        fontSize: 24,
+                        fontWeight: "bold",
+                        textAlign: "center",
+                        marginTop: 20,
+                        marginBottom: 20,
+                    }}
+                >
+                    Yen Collection
+                </Text>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignSelf: "center",
+                        gap: 15,
+                    }}
+                >
+                    <Button onPress={() => setView("form")} title="Form" />
+                    <Button
+                        onPress={() => setView("overview")}
+                        title="Overview"
+                    />
                 </View>
-                <Menu />
-            </ScrollView>
+
+                <View
+                    style={{
+                        marginTop: 30,
+                        marginLeft: 15,
+                        marginRight: 15,
+                    }}
+                >
+                    {view === "form" ? (
+                        <YenForm records={records} />
+                    ) : (
+                        <YenOverview records={records} />
+                    )}
+                </View>
+            </View>
         </SafeAreaView>
     );
 };

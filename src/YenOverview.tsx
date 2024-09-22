@@ -1,7 +1,29 @@
-import React, { Component } from "react";
-import { Table, TableWrapper, Row } from "react-native-table-component";
-import { Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, FlatList } from "react-native";
+import { openDb, getData } from "./Database";
 
-export const YenOverview = () => {
-    return <Text>This will be an overview</Text>;
+interface YenOverviewProps {
+    records: YenRecord[];
+}
+
+export const YenOverview: React.FC<YenOverviewProps> = ({ records }) => {
+    return (
+        <>
+            <Text>Overview</Text>
+            <Text>
+                You've collected{" "}
+                {records.filter((record) => record.inPossession).length} coins
+            </Text>
+            <FlatList
+                data={records}
+                renderItem={({ item }) => (
+                    <Text>
+                        {item.eraJp} {item.eraEn} {item.yenValue}{" "}
+                        {item.inPossession} {item.condition}
+                    </Text>
+                )}
+                keyExtractor={(item) => item.id.toString()}
+            />
+        </>
+    );
 };
