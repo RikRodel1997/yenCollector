@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, StyleSheet, Text, View, useColorScheme } from "react-native";
+import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 
 interface YenFormProps {
@@ -10,9 +10,6 @@ export const YenForm: React.FC<YenFormProps> = ({ records }) => {
     const [value, setValue] = useState("1");
     const [era, setEra] = useState("null");
     const isDarkMode = useColorScheme() === "dark";
-
-    console.log("value:", value);
-    console.log("era:", era);
 
     const data = [
         {
@@ -80,27 +77,12 @@ export const YenForm: React.FC<YenFormProps> = ({ records }) => {
             {renderDropdown(eras, isDarkMode, era, (item: any) => {
                 setEra(item.value);
             })}
-            {/* <FlatList
-                data={records}
-                renderItem={({ item }) => {
-                    if (item.yenValue !== parseInt(value)) {
-                        return null;
-                    }
-                    return (
-                        <Text>
-                            {item.eraJp} {item.eraEn} {item.yenValue}{" "}
-                            {item.inPossession} {item.condition}
-                        </Text>
-                    );
-                }}
-                keyExtractor={(item) => item.id.toString()} // Add keyExtractor for FlatList
-            /> */}
         </View>
     );
 };
 
 const renderDropdown = (
-    data: any,
+    data: any[],
     isDarkMode: boolean,
     value: string,
     onChangeExpression: any
@@ -127,7 +109,6 @@ const renderDropdown = (
                     isDarkMode && styles.itemContainerStyleDark,
                 ]}
                 activeColor={isDarkMode ? "#555" : "#ddd"} // Background color of the selected item
-                iconStyle={styles.iconStyle}
                 search={false}
                 maxHeight={300}
                 labelField="label"
@@ -146,7 +127,7 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderRadius: 8,
         paddingHorizontal: 8,
-        marginBottom: 20,
+        marginBottom: 30,
     },
     dropdownDark: {
         backgroundColor: "#333",
@@ -178,10 +159,6 @@ const styles = StyleSheet.create({
     },
     itemContainerStyleDark: {
         backgroundColor: "#333", // Dark mode background for dropdown items
-    },
-    iconStyle: {
-        width: 20,
-        height: 20,
     },
 });
 
