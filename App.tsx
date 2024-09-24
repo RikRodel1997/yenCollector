@@ -6,7 +6,7 @@ import {
     useColorScheme,
     View,
 } from "react-native";
-import { openDb, getData } from "./src/Database";
+import { Database } from "./src/database";
 import { Button } from "./src/components/Button";
 import { YenForm } from "./src/YenForm";
 import { YenOverview } from "./src/YenOverview";
@@ -21,8 +21,11 @@ const App = (): React.JSX.Element => {
 
     const fetchRecords = async () => {
         try {
-            await openDb();
-            setRecords(await getData());
+            const database = new Database();
+            await database.initDb();
+            const records = await database.getData();
+            setDb(database);
+            setRecords(records);
         } catch (error) {
             console.error("Failed to fetch records:", error);
         }
@@ -51,7 +54,7 @@ const App = (): React.JSX.Element => {
 
             <View style={styles.appBody}>
                 {view === "form" ? (
-                    <YenForm records={records} />
+                    <YenForm records={records} styles={styles} db={db} />
                 ) : (
                     <YenOverview records={records} />
                 )}

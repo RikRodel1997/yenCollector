@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, StyleSheet, Pressable } from "react-native";
+import { Text, Pressable } from "react-native";
 
 export const Button = (props: { onPress: any; title: string; styles: any }) => {
     const { onPress, title, styles } = props;
