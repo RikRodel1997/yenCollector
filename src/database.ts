@@ -167,4 +167,30 @@ export class Database {
             );
         });
     };
+
+    updateRecord = (record: YenRecord): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            if (!this.db) {
+                reject(new Error("Database not initialized"));
+                return;
+            }
+
+            this.db.transaction(
+                (tx) => {
+                    tx.executeSql(
+                        `UPDATE collection SET inPossession = ?, condition = ? WHERE id = ?;`,
+                        [record.inPossession, record.condition, record.id]
+                    );
+                },
+                (error) => {
+                    console.error("Failed to update record:", error);
+                    reject(error);
+                },
+                () => {
+                    console.log("Record updated successfully");
+                    resolve();
+                }
+            );
+        });
+    };
 }

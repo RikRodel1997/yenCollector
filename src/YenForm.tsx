@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, useColorScheme, Alert } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button } from "./components/Button";
-import { SQLiteDatabase } from "react-native-sqlite-storage";
+import { Database } from "./database";
 
 interface YenFormProps {
     records: YenRecord[];
     styles: any;
-    db: SQLiteDatabase;
+    db: Database;
 }
 
 export const YenForm: React.FC<YenFormProps> = ({ records, styles, db }) => {
@@ -16,6 +16,7 @@ export const YenForm: React.FC<YenFormProps> = ({ records, styles, db }) => {
     const [currentCondition, setCondition] = useState("null");
     const isDarkMode = useColorScheme() === "dark";
 
+    const coinsData = coins();
     const erasData = records
         .filter(
             (record) =>
@@ -26,58 +27,44 @@ export const YenForm: React.FC<YenFormProps> = ({ records, styles, db }) => {
 
     const conditions = [
         {
-            label: "Bad",
-            value: "Bad, to be replaced.",
+            label: "Bad, to be replaced.",
+            value: "Bad",
         },
         {
-            label: "Alright",
-            value: "Alright, but could be better.",
+            label: "Alright, but could be better.",
+            value: "Alright",
         },
         {
-            label: "Good",
-            value: "Good, but not perfect.",
+            label: "Good, a keeper.",
+            value: "Good",
         },
         {
-            label: "Perfect",
-            value: "Perfect, no need to replace.",
+            label: "Perfect, no need to replace.",
+            value: "Perfect",
         },
     ];
 
     return (
         <View>
-            <Text
-                style={[
-                    thisStyles.selectedTextStyle,
-                    isDarkMode && thisStyles.selectedTextStyleDark,
-                ]}
-            >
-                Select a coin
-            </Text>
-            {renderDropdown(coins(), isDarkMode, currentValue, (item: any) => {
-                console.log("item:", item.value[0].yenValue);
-                setValue(item.value[0].yenValue.toString());
+            <Text style={styles.bodyText}>Select a coin</Text>
+            {renderDropdown(
+                coinsData,
+                isDarkMode,
+                currentValue,
+                (coin: any) => {
+                    console.log("coin:", coin);
+                    setValue(coin.value.toString());
+                }
+            )}
+
+            <Text style={styles.bodyText}>Select an era</Text>
+            {renderDropdown(erasData, isDarkMode, currentEra, (era: any) => {
+                console.log("currentValue:", currentValue);
+                console.log("era:", era);
+                setEra(era.value);
             })}
 
-            <Text
-                style={[
-                    thisStyles.selectedTextStyle,
-                    isDarkMode && thisStyles.selectedTextStyleDark,
-                ]}
-            >
-                Select an era
-            </Text>
-            {renderDropdown(erasData, isDarkMode, currentEra, (item: any) => {
-                setEra(item.value);
-            })}
-
-            <Text
-                style={[
-                    thisStyles.selectedTextStyle,
-                    isDarkMode && thisStyles.selectedTextStyleDark,
-                ]}
-            >
-                Select a condition
-            </Text>
+            <Text style={styles.bodyText}>Select a condition</Text>
             {renderDropdown(
                 conditions,
                 isDarkMode,
@@ -91,12 +78,30 @@ export const YenForm: React.FC<YenFormProps> = ({ records, styles, db }) => {
                 title="Add to collection"
                 onPress={() => {
                     if (currentEra === "null" || currentCondition === "null") {
-                        alert("Please select an era and condition.");
+                        Alert.alert(
+                            "Select all fields",
+                            "Please select an era and condition."
+                        );
                         return;
                     }
+                    const record = records.find(
+                        (record) =>
+                            !record.inPossession &&
+                            record.eraJp === currentEra &&
+                            record.yenValue === parseInt(currentValue)
+                    );
+                    if (!record) {
+                        Alert.alert("Error", "Record not found.");
+                        return;
+                    }
+                    record.condition = currentCondition;
+                    record.inPossession = true;
+                    console.log("record:", record);
                     // Add to collection
-                    alert(
-                        `Added ${currentValue} Yen coin from the ${currentEra} era to the collection.`
+                    db.updateRecord(record);
+                    Alert.alert(
+                        "Added to collection",
+                        `Added ¥${record.yenValue} ${record.eraJp} to your collection.`
                     );
                 }}
                 styles={{
@@ -146,67 +151,29 @@ const renderDropdown = (
 };
 
 const getDropdownStyles = (isDarkMode: boolean) => ({
-    dropdown: [thisStyles.dropdown, isDarkMode && thisStyles.dropdownDark],
-    placeholderStyle: [
-        thisStyles.placeholderStyle,
-        isDarkMode && thisStyles.placeholderStyleDark,
-    ],
-    selectedTextStyle: [
-        thisStyles.selectedTextStyle,
-        isDarkMode && thisStyles.selectedTextStyleDark,
-    ],
-    itemTextStyle: [
-        thisStyles.itemTextStyle,
-        isDarkMode && thisStyles.itemTextStyleDark,
-        { lineHeight: 16, fontSize: 16 },
-    ],
-    itemContainerStyle: [
-        thisStyles.itemContainerStyle,
-        isDarkMode && thisStyles.itemContainerStyleDark,
-    ],
-});
-
-const thisStyles = StyleSheet.create({
     dropdown: {
         height: 50,
-        borderColor: "gray",
+        borderColor: isDarkMode ? "#555" : "gray",
         borderWidth: 0.5,
         borderRadius: 8,
         paddingHorizontal: 8,
         marginBottom: 30,
-    },
-    dropdownDark: {
-        backgroundColor: "#333",
-        borderColor: "#555",
+        backgroundColor: isDarkMode ? "#333" : "white",
     },
     placeholderStyle: {
         fontSize: 16,
-        color: "gray",
-    },
-    placeholderStyleDark: {
-        color: "#ccc", // Lighter text for dark mode
+        color: isDarkMode ? "#ccc" : "gray",
     },
     selectedTextStyle: {
-        fontSize: 16,
-        color: "black",
-    },
-    selectedTextStyleDark: {
-        color: "white", // Text color for dark mode
+        color: isDarkMode ? "white" : "black",
     },
     itemTextStyle: {
         fontSize: 16,
-        color: "black", // Default text color for light mode
-    },
-    itemTextStyleDark: {
-        fontSize: 16,
-        color: "white", // Text color for dark mode
-        lineHeight: 16,
+        color: isDarkMode ? "white" : "black",
+        lineHeight: 18,
     },
     itemContainerStyle: {
-        backgroundColor: "white", // Default item background for light mode
-    },
-    itemContainerStyleDark: {
-        backgroundColor: "#333", // Dark mode background for dropdown items
+        backgroundColor: isDarkMode ? "#333" : "white",
     },
 });
 

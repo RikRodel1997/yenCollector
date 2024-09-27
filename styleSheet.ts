@@ -28,6 +28,7 @@ export const getStyles = (isDarkMode: boolean) => {
         } as StyleProp<ViewStyle>,
         button: {
             alignItems: "center",
+            alignSelf: "center",
             paddingVertical: 12,
             paddingHorizontal: 32,
             borderRadius: 10,
@@ -39,7 +40,7 @@ export const getStyles = (isDarkMode: boolean) => {
         },
         bodyText: {
             fontSize: 16,
-            color: "white",
+            color: isDarkMode ? "white" : "black",
         },
     };
 };
