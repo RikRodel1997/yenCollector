@@ -42,5 +42,32 @@ export const getStyles = (isDarkMode: boolean) => {
             fontSize: 16,
             color: isDarkMode ? "white" : "black",
         },
+        table: {
+            flexDirection: "column",
+            margin: 10,
+        },
+        tableRow: {
+            flexDirection: "row",
+        },
+        hasCoin: {
+            backgroundColor: "green",
+        },
+        missingCoin: {
+            backgroundColor: "red",
+        },
+        tableCell: {
+            paddingTop: 5,
+            paddingBottom: 5,
+            borderWidth: 1,
+            borderColor: "#ddd",
+            textAlign: "center",
+        },
+        tableHeader: {
+            backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+            fontWeight: "bold",
+        },
+        firstColumn: {
+            fontWeight: "bold",
+        },
     };
 };

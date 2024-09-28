@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import { Database } from "./src/database";
 import { Button } from "./src/components/Button";
-import { YenForm } from "./src/YenForm";
-import { YenOverview } from "./src/YenOverview";
+import { Form } from "./src/Form";
+import { Overview } from "./src/Overview";
 import { getStyles } from "./styleSheet";
 
 const App = (): React.JSX.Element => {
@@ -54,9 +54,9 @@ const App = (): React.JSX.Element => {
 
             <View style={styles.appBody}>
                 {view === "form" ? (
-                    <YenForm records={records} styles={styles} db={db} />
+                    <Form records={records} styles={styles} db={db} />
                 ) : (
-                    <YenOverview records={records} />
+                    <Overview records={records} styles={styles} />
                 )}
             </View>
         </SafeAreaView>

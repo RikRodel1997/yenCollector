@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Text, FlatList } from "react-native";
+import React from "react";
+import { Text } from "react-native";
+import { Table } from "./components/Table";
 
-interface YenOverviewProps {
+interface OverviewProps {
     records: YenRecord[];
+    styles: any;
 }
 
-export const YenOverview: React.FC<YenOverviewProps> = ({ records }) => {
+export const Overview: React.FC<OverviewProps> = ({ records, styles }) => {
     const coins = [1, 5, 10, 50, 100, 500];
+    const headers = ["Era", "¥1", "¥5", "¥10", "¥50", "¥100", "¥500"];
 
     return (
         <>
@@ -20,12 +23,21 @@ export const YenOverview: React.FC<YenOverviewProps> = ({ records }) => {
                 {records.filter((record) => !record.inPossession).length} coins
                 {"\n"}
             </Text>
-            {coins.map((coin, index) => renderCoin(records, coin))}
+            {/* {coins.map((coin, index) => renderCoin(records, coin, styles))} */}
+            {coins.map((coin, index) => (
+                <Table
+                    headers={headers}
+                    data={records.filter((value) => {
+                        return value.yenValue === coin;
+                    })}
+                    styles={styles}
+                />
+            ))}
         </>
     );
 };
 
-const renderCoin = (records: YenRecord[], coin: number) => {
+const renderCoin = (records: YenRecord[], coin: number, styles: any) => {
     const recordsByCoin = records.filter((record) => record.yenValue === coin);
     return (
         <>

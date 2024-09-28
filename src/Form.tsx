@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, useColorScheme, Alert } from "react-native";
+import React, { useState } from "react";
+import { Text, View, useColorScheme, Alert } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Button } from "./components/Button";
 import { Database } from "./database";
 
-interface YenFormProps {
+interface FormProps {
     records: YenRecord[];
     styles: any;
     db: Database;
 }
 
-export const YenForm: React.FC<YenFormProps> = ({ records, styles, db }) => {
+export const Form: React.FC<FormProps> = ({ records, styles, db }) => {
     const [currentValue, setValue] = useState("1");
     const [currentEra, setEra] = useState("null");
     const [currentCondition, setCondition] = useState("null");
@@ -205,5 +205,3 @@ const coins = () => {
         },
     ];
 };
-
-export default YenForm;

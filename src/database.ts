@@ -1,5 +1,5 @@
 import SQLite, { SQLiteDatabase } from "react-native-sqlite-storage";
-import { CoinData } from "./YenData";
+import { CoinData } from "./data";
 
 export class Database {
     private db: SQLiteDatabase | null = null;
