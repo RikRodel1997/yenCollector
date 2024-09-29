@@ -9,7 +9,7 @@ import {
 import { Database } from "./src/database";
 import { Button } from "./src/components/Button";
 import { Form } from "./src/Form";
-import { Overview } from "./src/Overview";
+import { TotalOverview } from "./src/TotalOverview";
 import { getStyles } from "./styleSheet";
 
 const App = (): React.JSX.Element => {
@@ -56,7 +56,7 @@ const App = (): React.JSX.Element => {
                 {view === "form" ? (
                     <Form records={records} styles={styles} db={db} />
                 ) : (
-                    <Overview records={records} styles={styles} />
+                    <TotalOverview records={records} styles={styles} />
                 )}
             </View>
         </SafeAreaView>

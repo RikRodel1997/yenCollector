@@ -61,6 +61,7 @@ export const getStyles = (isDarkMode: boolean) => {
             borderWidth: 1,
             borderColor: "#ddd",
             textAlign: "center",
+            minWidth: 100,
         },
         tableHeader: {
             backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
